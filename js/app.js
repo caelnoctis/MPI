@@ -208,7 +208,7 @@ function renderNav(route) {
   const a = ([h, t, c]) => `<a href="${h}" class="${c}">${t}</a>`;
   $('#nav').innerHTML = `
     <div class="nav__l">${L.map(a).join('')}</div>
-    <a class="logo" href="#/"><span>Buku</span><span>Belajar MPI</span></a>
+    <a class="logo" href="#/"><span>MPI -</span><span>Gregory A.S</span></a>
     <div class="nav__r">${R.map(a).join('')}</div>
     <button class="nav__menu" id="menuBtn" aria-expanded="false" aria-controls="drawer">Menu</button>`;
   $('#drawer').innerHTML = [...L, ...R].map(a).join('');
