@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buku Belajar MPI — Metode Pengukuran Intelegensi</title>
+  <meta name="description" content="Materi belajar Metode Pengukuran Intelegensi (WAIS, APM, IST, Binet, CFIT, TIDI, etika tes) lengkap dengan kuis per bab, pre-test, dan post-test.">
+  <meta name="theme-color" content="#DDFF1F">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23DDFF1F'/%3E%3Ctext x='32' y='46' font-family='Arial Black' font-size='34' text-anchor='middle' fill='%23FF2BAA'%3EIQ%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Chakra+Petch:wght@600;700&family=Rubik+Spray+Paint&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- shared SVG defs -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7"/>
+        <feDisplacementMap in="SourceGraphic" scale="4.5"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="stage">
+    <a class="page-tag" href="#/">{metode pengukuran intelegensi}</a>
+    <div class="spray spray--top" aria-hidden="true">IQ?</div>
+
+    <!-- stickers on the lime margins (wide screens only) -->
+    <figure class="side side--left" id="sidePhoto" aria-hidden="true"></figure>
+    <div class="side side--right" aria-hidden="true">
+      <svg viewBox="0 0 160 190" filter="url(#rough)">
+        <g fill="none" stroke="#0C0C0C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M80 12 C38 12 12 42 14 82 C16 124 44 150 84 148 C124 146 148 116 146 76 C144 38 118 12 80 12 Z"/>
+          <path d="M44 58 l20 20 M64 58 l-20 20 M96 54 l20 20 M116 54 l-20 20"/>
+          <path d="M46 108 C 62 126 98 128 118 104"/>
+        </g>
+        <g fill="#0C0C0C">
+          <path d="M36 128 q6 0 6 8 v26 q0 9 -6 9 q-6 0 -6 -9 v-26 q0 -8 6 -8z"/>
+          <path d="M70 146 q5 0 5 7 v18 q0 7 -5 7 q-5 0 -5 -7 v-18 q0 -7 5 -7z"/>
+          <path d="M118 136 q6 0 6 8 v30 q0 9 -6 9 q-6 0 -6 -9 v-30 q0 -8 6 -8z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="side side--g spray" aria-hidden="true">g<small>faktor umum — spearman</small></div>
+
+    <main class="sheet hdl" id="sheet">
+      <header class="nav" id="nav"></header>
+      <nav class="drawer" id="drawer" aria-label="Menu"></nav>
+      <div id="app"></div>
+    </main>
+
+    <div class="spray spray--foot" aria-hidden="true">INTELEGENSI</div>
+    <footer class="foot">
+      <span>Disusun dari <b>Buku Belajar Metode Pengukuran Intelegensi</b> · RPS IT051352<br>Fakultas Psikologi Universitas Gunadarma · revisi 11 September 2023</span>
+      <span>Bahan belajar mandiri. Tidak memuat butir soal asli tes psikologi.<br>Cocokkan prosedur teknis dengan manual resmi &amp; arahan dosen.</span>
+    </footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
