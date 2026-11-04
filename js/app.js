@@ -18,6 +18,10 @@ const pad = n => String(n).padStart(2, '0');
 const ch = no => CHAPTERS.find(c => c.no === +no);
 const dec = (n, d = 1) => n.toFixed(d).replace('.', ',');
 const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const N = CHAPTERS.length;
+const ORDER = GROUPS.flatMap(g => g.chapters);               // urutan tampil (TIKI setelah TIDI)
+const ORDERED = ORDER.map(n => CHAPTERS.find(c => c.no === n));
+const stepCh = (no, d) => { const i = ORDER.indexOf(+no) + d; return i >= 0 && i < ORDER.length ? ch(ORDER[i]) : null; };
 const readCount = () => CHAPTERS.filter(c => S.read[c.no]).length;
 const totalQuiz = Object.values(QUIZ).reduce((n, a) => n + a.length, 0);
 const wechsler = iq => iq >= 130 ? 'Very Superior' : iq >= 120 ? 'Superior' : iq >= 110 ? 'High Average' : iq >= 90 ? 'Average' : iq >= 80 ? 'Low Average' : iq >= 70 ? 'Borderline' : 'Intellectually Deficient';
@@ -203,7 +207,7 @@ function renderNav(route) {
   const R = [
     ['#/pretest', `Pre-test${S.pre ? `(${S.pre.pct})` : ''}`, on('/pretest')],
     ['#/posttest', `Post-test${S.post ? `(${S.post.pct})` : ''}`, on('/posttest')],
-    ['#/progres', `Progres(${readCount()}/14)`, on('/progres')],
+    ['#/progres', `Progres(${readCount()}/${N})`, on('/progres')],
   ];
   const a = ([h, t, c]) => `<a href="${h}" class="${c}">${t}</a>`;
   $('#nav').innerHTML = `
@@ -224,8 +228,8 @@ function renderNav(route) {
    VIEW: HOME
    ========================================================= */
 function viewHome() {
-  const tags = [['teori', 1], ['rapport', 2], ['wais', 3], ['apm', 5], ['ist', 6], ['binet', 7], ['cfit', 8], ['tidi', 9], ['iq', 12], ['etika', 14]];
-  const chips = CHAPTERS.map(c => `<span class="${S.read[c.no] ? 'is-done' : ''}">${pad(c.no)}</span>`).join('');
+  const tags = [['teori', 1], ['rapport', 2], ['wais', 3], ['apm', 5], ['ist', 6], ['binet', 7], ['cfit', 8], ['tidi', 9], ['tiki', 15], ['iq', 12], ['etika', 14]];
+  const chips = ORDERED.map(c => `<span class="${S.read[c.no] ? 'is-done' : ''}">${pad(c.no)}</span>`).join('');
   const scoreTxt = r => r ? `skor ${r.pct}` : 'belum dikerjakan';
   return `
 <section class="hero">
@@ -233,7 +237,7 @@ function viewHome() {
   <ul class="hero__tags">${tags.map(([t, n]) => `<li><a href="#/bab/${n}">[${t}]</a></li>`).join('')}</ul>
   <div class="hero__row">
     <div class="hero__fig">${figMatrix()}</div>
-    <p class="blurb">14 bab sesuai pertemuan 1–15 RPS Metode Pengukuran Intelegensi: dari teori, alat tes, sampai etika penggunaannya.</p>
+    <p class="blurb">14 bab sesuai pertemuan 1–15 RPS, ditambah bab TIKI dan pendalaman dari materi kelas: dari teori, alat tes, sampai etika.</p>
     <div class="hero__fig">${figWatch()}</div>
     <p class="blurb">Tiap bab berisi materi inti, Poin Kunci, Cek Pemahaman, lalu kuis. Ukur kemajuanmu lewat pre-test dan post-test.</p>
     <div class="hero__fig">${figBlocks()}</div>
@@ -301,10 +305,10 @@ function viewHome() {
   <div class="crew">
     <a class="mem" href="#/pretest"><div class="mem__pic hdl"><span class="mem__tag">Pre-test</span><div class="art art--pink"><div class="art__n">20<small>soal · sebelum belajar</small></div></div></div>
       <div class="mem__cap"><b>@pretest</b><span>${scoreTxt(S.pre)}</span></div></a>
-    <a class="mem" href="#/progres"><div class="mem__pic hdl"><span class="mem__tag">Progres</span><div class="art art--white art--dots"><div class="art__n" style="background:#fff;padding:6px 10px;border:1.5px solid #0C0C0C">${readCount()}/14</div></div></div>
+    <a class="mem" href="#/progres"><div class="mem__pic hdl"><span class="mem__tag">Progres</span><div class="art art--white art--dots"><div class="art__n" style="background:#fff;padding:6px 10px;border:1.5px solid #0C0C0C">${readCount()}/${N}</div></div></div>
       <div class="mem__cap"><b>@progres</b><span>bab dibaca</span></div></a>
     <a class="mem mem--big" href="#/kuis"><div class="mem__pic hdl"><span class="mem__tag">Kuis per bab</span><div class="art art--blue"><div class="chips14">${chips}</div></div></div>
-      <div class="mem__cap"><b>@kuis_bab</b><span>14 bab · ${totalQuiz} soal · langsung ada pembahasan</span></div></a>
+      <div class="mem__cap"><b>@kuis_bab</b><span>${N} bab · ${totalQuiz} soal · langsung ada pembahasan</span></div></a>
     <a class="mem" href="#/lampiran/a"><div class="mem__pic hdl"><span class="mem__tag">Lampiran A</span><div class="art art--white"><div style="font:400 11px/1.45 'Space Mono',monospace;padding:16px">TESTER:<br>"Yang penting Anda sudah berusaha sebaik mungkin. Kita lanjut ke soal berikutnya."</div></div></div>
       <div class="mem__cap"><b>@roleplay</b><span>naskah rapport</span></div></a>
     <a class="mem" href="#/posttest"><div class="mem__pic hdl"><span class="mem__tag">Post-test</span><div class="art art--ink"><div class="art__n">20<small>soal · setelah belajar</small></div></div></div>
@@ -344,7 +348,11 @@ function viewMateri() {
 
 function viewChapter(no) {
   const c = ch(no); if (!c) return view404();
-  const prev = ch(no - 1), next = ch(no + 1);
+  const prev = stepCh(no, -1), next = stepCh(no, 1);
+  const kelas = typeof KELAS !== 'undefined' && KELAS[no] ? `<section class="kelas">
+    <header class="kelas__head"><span class="kelas__tag">materi kelas</span><h2>Pendalaman dari materi dosen &amp; presentasi kelompok</h2>
+    <p>Bagian ini melengkapi isi buku di atas dengan detail dari PPT dosen dan presentasi kelas 3PA18. Bila ada angka yang berbeda dari buku, keduanya dicantumkan; ikuti arahan dosen untuk ujian.</p></header>
+    <div class="prose">${KELAS[no]}</div></section>` : '';
   const checks = c.checks.length ? `<section class="checks"><h2>Cek pemahaman</h2><ol>
     ${c.checks.map((q, i) => `<li><div>${q}
       <textarea data-note="${no}-${i}" placeholder="Tulis jawabanmu di sini (tersimpan di browser ini)…">${(S.notes[`${no}-${i}`] || '').replace(/</g, '&lt;')}</textarea>
@@ -357,6 +365,7 @@ function viewChapter(no) {
     <h1 class="ch-title">Bab ${no}. ${c.title}</h1>
     <p class="ch-cpmk">${c.meet} · <b>Sub-CPMK</b> ${c.cpmk.charAt(0).toLowerCase() + c.cpmk.slice(1)}</p></header>
   <div class="prose">${c.html}</div>
+  ${kelas}
   <section class="keys hdl"><h2>Poin kunci</h2><ul>${c.keys.map(k => `<li>${k}</li>`).join('')}</ul></section>
   ${checks}
   <div class="ch-actions">
@@ -447,6 +456,92 @@ function mountWidgets(root) {
     calc();
   });
 
+  /* --- Binet: usia kronologis (1 th = 12 bln, 1 bln = 30 hari; ≥16 hari dibulatkan) --- */
+  $$('[data-widget="ca"]', root).forEach(el => {
+    el.innerHTML = `<div class="wdg"><div class="wdg__head"><span>Kalkulator usia kronologis (CA)</span><span>aturan kelas · 1 bln = 30 hari</span></div>
+    <div class="wdg__body">
+      <div class="wdg__row">
+        <label class="fld">Tanggal tes<input type="date" id="caT" value="2026-11-04" style="width:170px"></label>
+        <label class="fld">Tanggal lahir<input type="date" id="caL" value="2018-05-20" style="width:170px"></label>
+      </div>
+      <div class="out"><div><small>Selisih mentah</small><b id="caRaw" style="font-size:24px">–</b></div><div><small>CA dibulatkan</small><b id="caR">–</b></div><div><small>Dalam bulan</small><b id="caMo">–</b></div></div>
+      <p class="mono" id="caNote" style="font-size:11px;margin:0"></p>
+    </div></div>`;
+    const calc = () => {
+      const t = $('#caT', el).value.split('-').map(Number), l = $('#caL', el).value.split('-').map(Number);
+      if (t.length < 3 || l.length < 3 || t.some(isNaN) || l.some(isNaN)) return;
+      let d = t[2] - l[2], m = t[1] - l[1], y = t[0] - l[0], note = [];
+      if (d < 0) { d += 30; m -= 1; note.push('pinjam 1 bulan = 30 hari'); }
+      if (m < 0) { m += 12; y -= 1; note.push('pinjam 1 tahun = 12 bulan'); }
+      if (y < 0) { $('#caRaw', el).textContent = 'Tanggal lahir setelah tanggal tes'; $('#caR', el).textContent = '–'; $('#caMo', el).textContent = '–'; $('#caNote', el).textContent = ''; return; }
+      $('#caRaw', el).textContent = `${y} th ${m} bln ${d} hr`;
+      let ry = y, rm = m;
+      if (d >= 16) { rm += 1; note.push(`${d} hari ≥ 16 → dibulatkan ke atas`); } else note.push(`${d} hari ≤ 15 → diabaikan`);
+      if (rm >= 12) { ry += 1; rm -= 12; }
+      $('#caR', el).textContent = `${ry};${rm}`;
+      $('#caMo', el).textContent = ry * 12 + rm;
+      $('#caNote', el).textContent = 'Langkah: ' + note.join(' · ');
+    };
+    $$('input', el).forEach(i => i.addEventListener('input', calc));
+    calc();
+  });
+
+  /* --- IST: profil SW & dimensi Festigung–Flexibilität --- */
+  $$('[data-widget="ist"]', root).forEach(el => {
+    const subs = ['SE', 'WA', 'AN', 'GE', 'RA', 'ZR', 'FA', 'WU', 'ME'];
+    const def = [104, 98, 108, 96, 110, 102, 95, 100, 99];
+    el.innerHTML = `<div class="wdg"><div class="wdg__head"><span>Latihan membaca profil IST</span><span>isi SW tiap subtes</span></div>
+    <div class="wdg__body">
+      <div class="wdg__row">${subs.map((s, i) => `<label class="fld">${s}<input type="number" data-s="${s}" value="${def[i]}" style="width:66px"></label>`).join('')}</div>
+      <div class="curve" id="istChart"></div>
+      <div class="out"><div><small>GE + RA (festigung)</small><b id="istF">–</b></div><div><small>AN + ZR (flexibilität)</small><b id="istX">–</b></div><span class="cls" id="istC">–</span></div>
+      <p class="mono" style="font-size:11px;margin:0">Profil M–W dibaca dari empat titik pertama (SE, WA, AN, GE) pada grafik. Cocokkan bentuknya dengan contoh dari dosen.</p>
+    </div></div>`;
+    const calc = () => {
+      const v = {}; $$('input', el).forEach(i => { v[i.dataset.s] = parseFloat(i.value) || 0; });
+      const W = 600, H = 190, px = 40, lo = 70, hi = 130;
+      const X = i => px + i * (W - 2 * px) / 8, Y = s => H - 26 - (Math.max(lo, Math.min(hi, s)) - lo) / (hi - lo) * (H - 50);
+      let g = '';
+      [80, 100, 120].forEach(s => { g += `<line x1="${px}" x2="${W - px}" y1="${Y(s)}" y2="${Y(s)}" stroke="#ccc" ${s === 100 ? '' : 'stroke-dasharray="3 3"'}/><text x="${px - 6}" y="${Y(s) + 4}" text-anchor="end" ${MONO} font-size="10">${s}</text>`; });
+      g += `<rect x="${X(0) - 14}" y="8" width="${X(3) - X(0) + 28}" height="${H - 30}" fill="${LIME}" opacity=".35"/>`;
+      g += `<polyline fill="none" stroke="${INK}" stroke-width="2.5" points="${subs.map((s, i) => `${X(i)},${Y(v[s])}`).join(' ')}"/>`;
+      subs.forEach((s, i) => { g += `<circle cx="${X(i)}" cy="${Y(v[s])}" r="5" fill="${i < 4 ? PINK : '#fff'}" stroke="${INK}" stroke-width="1.5"/><text x="${X(i)}" y="${H - 8}" text-anchor="middle" ${MONO} font-size="11" font-weight="700">${s}</text>`; });
+      $('#istChart', el).innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik profil SW IST">${g}</svg>`;
+      const f = v.GE + v.RA, x = v.AN + v.ZR;
+      $('#istF', el).textContent = f; $('#istX', el).textContent = x;
+      $('#istC', el).textContent = f > x ? 'Cenderung festigung (eksak)' : x > f ? 'Cenderung flexibilität (non-eksak)' : 'Seimbang';
+    };
+    $$('input', el).forEach(i => i.addEventListener('input', calc));
+    calc();
+  });
+
+  /* --- CFIT: raw score --- */
+  $$('[data-widget="cfit"]', root).forEach(el => {
+    el.innerHTML = `<div class="wdg"><div class="wdg__head"><span>Hitung RS CFIT</span><span>Skala 2 / 3</span></div>
+    <div class="wdg__body">
+      <div class="wdg__row">
+        <div class="fld">Skala<div class="seg" id="cfSeg"><button type="button" data-v="2">2</button><button type="button" class="on" data-v="3">3</button></div></div>
+        <label class="fld">Seri <span>/12</span><input type="number" data-m="12" value="6" min="0"></label>
+        <label class="fld">Klasifikasi <span>/14</span><input type="number" data-m="14" value="8" min="0"></label>
+        <label class="fld">Matriks <span>/12</span><input type="number" data-m="12" value="6" min="0"></label>
+        <label class="fld">Persyaratan <span id="cfMax">/10</span><input type="number" id="cfP" data-m="10" value="4" min="0"></label>
+      </div>
+      <div class="out"><div><small>Raw score</small><b id="cfRS">–</b></div><div><small>Maksimum</small><b id="cfTot" style="color:var(--ink)">–</b></div></div>
+      <p class="mono" style="font-size:11px;margin:0">RS dikonversi ke IQ dengan tabel norma sesuai usia (IQ CFIT: M 100, SD 16).</p>
+    </div></div>`;
+    const calc = () => {
+      let rs = 0, tot = 0;
+      $$('input', el).forEach(i => { const m = +i.dataset.m; const v = Math.max(0, Math.min(m, parseInt(i.value, 10) || 0)); rs += v; tot += m; });
+      $('#cfRS', el).textContent = rs; $('#cfTot', el).textContent = tot;
+    };
+    $$('#cfSeg button', el).forEach(b => b.addEventListener('click', () => {
+      $$('#cfSeg button', el).forEach(x => x.classList.toggle('on', x === b));
+      const m = b.dataset.v === '2' ? 8 : 10; $('#cfP', el).dataset.m = m; $('#cfMax', el).textContent = '/' + m; calc();
+    }));
+    $$('input', el).forEach(i => i.addEventListener('input', calc));
+    calc();
+  });
+
   $$('[data-widget="matrix"]', root).forEach(el => {
     let g = `<rect x="2" y="2" width="216" height="216" fill="#fff" stroke="${INK}" stroke-width="2"/><path d="M74 2V218M146 2V218M2 74H218M2 146H218" stroke="${INK}" stroke-width="1.2"/>`;
     for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) { if (r === 2 && c === 2) continue; g += cellShapes(ROWS[r], c + 1, 38 + 72 * c, 38 + 72 * r, 12, 18, ROWFILL[r]); }
@@ -494,13 +589,13 @@ function quizIntro(mode) {
     <p class="qz__sub">${isPre ? 'Petakan pemahaman awalmu sebelum membaca materi.' : 'Ukur pemahamanmu setelah menyelesaikan materi.'}</p>
     <div class="intro">
       <div><h3>Aturan</h3><ul class="bul">
-        <li>20 soal pilihan ganda, mencakup Bab 1–14.</li>
+        <li>20 soal pilihan ganda, mencakup seluruh bab.</li>
         <li>Jawaban benar &amp; pembahasan baru muncul setelah kamu mengumpulkan.</li>
         <li>Kamu bisa pindah-pindah soal sebelum mengumpulkan.</li>
         <li>${isPre ? 'Post-test memakai soal paralel (berbeda) dengan topik yang sama, jadi kenaikan skor bisa dibandingkan.' : 'Skor dibandingkan dengan pre-test (soal paralel, topik sama).'}</li>
         <li>Skor tersimpan di browser ini saja.</li></ul>
         <div class="btns" style="margin-top:18px"><button class="btn btn--pink" id="go">${last ? 'Ulangi' : 'Mulai'} ${isPre ? 'pre-test' : 'post-test'} →</button>
-        ${!isPre && readCount() < 14 ? `<a class="btn btn--ghost" href="#/materi">Lanjut baca dulu (${readCount()}/14)</a>` : ''}</div></div>
+        ${!isPre && readCount() < N ? `<a class="btn btn--ghost" href="#/materi">Lanjut baca dulu (${readCount()}/${N})</a>` : ''}</div></div>
       <div class="last">${last ? `Skor terakhir<b>${last.pct}</b>${last.correct}/${last.total} benar · ${new Date(last.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Belum pernah dikerjakan.'}
         ${other ? `<p style="margin-top:16px">${isPre ? 'Post-test' : 'Pre-test'}: <strong>${other.pct}</strong></p>` : ''}
         ${last ? `<p><a href="#/progres">Lihat progres →</a></p>` : ''}</div>
@@ -601,7 +696,7 @@ function renderResult() {
     ${weak.length ? `<p class="mono" style="font-size:12px">Bab yang perlu diulang: ${weak.map(b => `<a href="#/bab/${b}" style="color:var(--pink);font-weight:700">Bab ${b}</a>`).join(', ')}</p>` : ''}
     <div class="btns" style="margin:22px 0 30px">
       <button class="btn btn--pink" id="again">Ulangi</button>
-      ${Q.mode === 'bab' ? `<a class="btn btn--ghost" href="#/bab/${Q.id}">Baca ulang bab ${pad(Q.id)}</a>${ch(Q.id + 1) ? `<a class="btn" href="#/kuis/${Q.id + 1}">Kuis bab ${pad(Q.id + 1)} →</a>` : `<a class="btn" href="#/posttest">Post-test →</a>`}` : ''}
+      ${Q.mode === 'bab' ? `<a class="btn btn--ghost" href="#/bab/${Q.id}">Baca ulang bab ${pad(Q.id)}</a>${stepCh(Q.id, 1) ? `<a class="btn" href="#/kuis/${stepCh(Q.id, 1).no}">Kuis bab ${pad(stepCh(Q.id, 1).no)} →</a>` : `<a class="btn" href="#/posttest">Post-test →</a>`}` : ''}
       ${Q.mode === 'pre' ? `<a class="btn" href="#/bab/1">Mulai belajar Bab 01 →</a>` : ''}
       ${Q.mode === 'post' ? `<a class="btn" href="#/progres">Lihat progres →</a>` : ''}
     </div>
@@ -627,7 +722,7 @@ function viewKuis() {
     <div class="qidx">
       ${card('#/pretest', 'bentuk A', '20 soal', S.pre ? S.pre.pct : 'PRE', 'Pre-test', `<span>sebelum belajar</span><span>${S.pre ? 'selesai' : 'mulai →'}</span>`, !!S.pre)}
       ${card('#/posttest', 'bentuk B', '20 soal', S.post ? S.post.pct : 'POST', 'Post-test', `<span>setelah belajar</span><span>${S.post ? 'selesai' : 'mulai →'}</span>`, !!S.post)}
-      ${CHAPTERS.map(c => card(`#/kuis/${c.no}`, `bab ${pad(c.no)}`, `${QUIZ[c.no].length} soal`, S.quiz[c.no] != null ? S.quiz[c.no] : c.tag, c.title,
+      ${ORDERED.map(c => card(`#/kuis/${c.no}`, `bab ${pad(c.no)}`, `${QUIZ[c.no].length} soal`, S.quiz[c.no] != null ? S.quiz[c.no] : c.tag, c.title,
         `<span>${S.read[c.no] ? '✓ dibaca' : 'belum dibaca'}</span><span>${S.quiz[c.no] != null ? 'terbaik ' + S.quiz[c.no] : 'mulai →'}</span>`, S.quiz[c.no] != null)).join('')}
     </div></div></section>`;
 }
@@ -639,12 +734,12 @@ function viewProgres() {
   return `<section class="qz view"><div class="qz__in" style="max-width:1040px">
     <span class="qz__mode">Tersimpan di browser ini</span><h1 class="qz__title">Progres</h1>
     <div class="dash">
-      <div><small>Bab dibaca</small><b>${readCount()}/14</b><span>${readCount() === 14 ? 'Semua bab selesai.' : `<a href="#/bab/${(CHAPTERS.find(c => !S.read[c.no]) || CHAPTERS[0]).no}">Lanjut ke bab berikutnya →</a>`}</span></div>
+      <div><small>Bab dibaca</small><b>${readCount()}/${N}</b><span>${readCount() === N ? 'Semua bab selesai.' : `<a href="#/bab/${(ORDERED.find(c => !S.read[c.no]) || ORDERED[0]).no}">Lanjut ke bab berikutnya →</a>`}</span></div>
       <div><small>Pre → Post</small><b>${S.pre ? S.pre.pct : '–'}${S.post ? ' → ' + S.post.pct : ''}</b><span>${d != null ? `${d >= 0 ? 'Naik' : 'Turun'} ${Math.abs(d)} poin` : S.pre ? '<a href="#/posttest">Kerjakan post-test →</a>' : '<a href="#/pretest">Kerjakan pre-test →</a>'}</span></div>
-      <div><small>Rata-rata kuis bab</small><b>${avg != null ? avg : '–'}</b><span>${done.length}/14 kuis dikerjakan</span></div>
+      <div><small>Rata-rata kuis bab</small><b>${avg != null ? avg : '–'}</b><span>${done.length}/${N} kuis dikerjakan</span></div>
     </div>
     <h2 class="disp" style="font-size:26px;margin-top:34px">Kuis per bab</h2>
-    <div class="brk">${CHAPTERS.map(c => { const p = S.quiz[c.no];
+    <div class="brk">${ORDERED.map(c => { const p = S.quiz[c.no];
       return `<div class="brk__row"><a href="#/kuis/${c.no}">${pad(c.no)} ${c.tag}${S.read[c.no] ? ' ✓' : ''}</a><div class="brk__bar">${p != null ? `<i class="${p < 60 ? 'lo' : ''}" style="width:${p}%"></i>` : ''}</div><b>${p != null ? p : '–'}</b></div>`; }).join('')}</div>
     <div class="btns" style="margin-top:30px"><a class="btn btn--pink" href="#/kuis">Ke daftar kuis</a><button class="btn btn--ghost" id="reset">Hapus semua progres</button></div>
   </div></section>`;

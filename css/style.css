@@ -552,6 +552,33 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .refs { font-size: 13.5px; line-height: 1.5; padding-left: 22px; display: grid; gap: 6px; }
 
+/* materi kelas (pendalaman) */
+.kelas { margin: 56px 0 0; border-top: 6px solid var(--ink); }
+.kelas__head { background: var(--blue); color: #fff; padding: 18px 20px 16px; position: relative;
+  background-image: radial-gradient(rgba(255,255,255,.16) 1.2px, transparent 1.3px); background-size: 9px 9px; }
+.kelas__head h2 { font: 900 clamp(20px, 2.6vw, 28px)/1.05 var(--f-disp); font-stretch: 112%; letter-spacing: -.035em; text-transform: uppercase; margin: 10px 0 8px; }
+.kelas__head p { margin: 0; font: 400 11.5px/1.5 var(--f-mono); max-width: 620px; }
+.kelas__tag { display: inline-block; background: var(--lime); color: var(--ink); font: 700 10.5px/1 var(--f-mono); text-transform: uppercase; padding: 5px 7px; }
+.kelas > .prose { padding-top: 6px; }
+.kelas > .prose > h2:first-child { border-top: 0; margin-top: 26px; }
+.prose .src { font: 700 10.5px/1.4 var(--f-mono); text-transform: uppercase; color: var(--blue); border-top: 1px dashed var(--blue); padding-top: 10px; margin-top: 26px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 22px; }
+.grid2 > div > h3 { margin-top: 0; }
+.grid2 > div .tbl-wrap { margin-top: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
+.chips span { border: var(--b); padding: 7px 10px; font: 700 11.5px/1 var(--f-mono); background: #fff; }
+.chips span:nth-child(3n+1) { background: var(--lime); }
+.bigstat--2 { grid-template-columns: repeat(2, 1fr); max-width: 420px; }
+.bigstat--3 { grid-template-columns: repeat(3, 1fr); }
+.tbl--rules td { font-size: 13.5px; }
+.tbl--rules td:first-child { white-space: normal; min-width: 110px; }
+.tbl--rules td:nth-child(2) { min-width: 220px; }
+.tbl--si td:first-child { color: var(--pink); font-family: var(--f-mono); font-size: 12px; text-transform: uppercase; }
+@media (max-width: 860px) {
+  .grid3, .bigstat--3 { grid-template-columns: 1fr; }
+  .bigstat--3 > div + div { border-left: 0; border-top: var(--b); }
+}
+
 /* key points + checks */
 .keys { background: var(--lime); border: var(--b); padding: 20px 22px; margin: 50px 0 18px; }
 .keys h2, .checks h2 { border: 0; margin: 0 0 10px; padding: 0; font: 900 24px/1 var(--f-disp); font-stretch: 118%; letter-spacing: -.04em; text-transform: uppercase; }
